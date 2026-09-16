@@ -1,24 +1,19 @@
 pipeline {
     agent any
-
-    parameters {
-        choice(name: 'ENVIRONMENT', choices: ['dev', 'staging', 'prod'], description: 'Select the deployment environment')
-    }
-
     stages {
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/Thiru-2407/sample.git'
             }
         }
-        stage('Show Parameter') {
+        stage('Generate Report') {
             steps {
-                echo "Selected environment: ${params.ENVIRONMENT}"
-            }
+                bat 'python app.py'
+             }
         }
-        stage('Build for Environment') {
+        stage('Archive Report') {
             steps {
-                echo "Building the application for the ${params.ENVIRONMENT} environment..."
+                archiveArtifacts artifacts: 'report.txt', fingerprint: true
             }
         }
     }
