@@ -6,14 +6,23 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/Thiru-2407/sample.git'
             }
         }
-        stage('Generate Report') {
-            steps {
-                bat 'python app.py'
-             }
+        stage('Parallel Checks') {
+            parallel {
+                stage('Frontend Check') {
+                    steps {
+                        bat 'python frontend_check.py'
+                    }
+                }
+                stage('Backend Check') {
+                    steps {
+                        bat 'python backend_check.py'
+                    }
+                }
+            }
         }
-        stage('Archive Report') {
+        stage('Summary') {
             steps {
-                archiveArtifacts artifacts: 'report.txt', fingerprint: true
+                echo 'Both frontend and backend checks are complete.'
             }
         }
     }
